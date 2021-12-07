@@ -111,7 +111,7 @@ nextToken = 0
 inputFile = None
 
 
-def getChar() -> None:
+def getChar():
     global nextChar, charClass
     nextChar = inputFile.read(1)
     if nextChar:
@@ -157,6 +157,8 @@ def getChar() -> None:
             charClass = CharClass.SPACE
         elif nextChar == ',':
             charClass = CharClass.COMMA
+        elif nextChar == '\n':
+            getChar()
         else:
             # Unrecognized character
             pass
@@ -164,17 +166,17 @@ def getChar() -> None:
         charClass = CharClass.EOF
 
 
-def addChar() -> None:
+def addChar():
     global lexeme
     lexeme += nextChar
 
 
-def getNonBlank() -> None:
+def getNonBlank():
     while nextChar.isspace():
         getChar()
 
 
-def lex() -> int:
+def lex():
     global nextToken, lexeme
     lexeme = ''
 
@@ -184,109 +186,125 @@ def lex() -> int:
     # skipped character
 
     getNonBlank()
-    if charClass:
-        # Parse variable
-        if charClass == CharClass.UPPERCASE:
+
+    # End of program
+    if not charClass or charClass == CharClass.EOF:
+        nextToken = CharClass.EOF
+
+    # Parse variable
+    elif charClass == CharClass.UPPERCASE:
+        addChar()
+        getChar()
+        while 0 <= charClass.value <= 2:
             addChar()
             getChar()
-            while 0 <= charClass <= 2:
-                addChar()
-                getChar()
 
-            nextToken = TokenClass.VARIABLE
+        nextToken = TokenClass.VARIABLE
 
-        # Parse numeral
-        elif charClass == CharClass.DIGIT:
+    # Parse numeral
+    elif charClass == CharClass.DIGIT:
+        addChar()
+        getChar()
+        while charClass == CharClass.DIGIT:
             addChar()
             getChar()
-            while charClass == CharClass.DIGIT:
-                addChar()
-                getChar()
 
-            nextToken = TokenClass.NUMERAL
+        nextToken = TokenClass.NUMERAL
 
-        # Parse Query
-        elif charClass == CharClass.QUESTIONMARK:
+    # Parse Query
+    elif charClass == CharClass.QUESTIONMARK:
+        addChar()
+        getChar()
+        if charClass == CharClass.SUB_OP:
             addChar()
             getChar()
-            if charClass == CharClass.SUB_OP:
-                addChar()
-                nextToken = TokenClass.QUERY_SYM
-            else:
-                # ERROR
-                pass
+            nextToken = TokenClass.QUERY_SYM
+        else:
+            # ERROR
+            pass
 
-        # Parse Implied By
-        elif charClass == CharClass.COLON:
+    # Parse Implied By
+    elif charClass == CharClass.COLON:
+        addChar()
+        getChar()
+        if charClass == CharClass.SUB_OP:
             addChar()
             getChar()
-            if charClass == CharClass.SUB_OP:
-                addChar()
-                nextToken = TokenClass.IMPLY
-            else:
-                # ERROR
-                pass
+            nextToken = TokenClass.IMPLY
+        else:
+            # ERROR
+            pass
 
-        # Parse String into Atom
-        elif charClass == CharClass.SINGLEQUOTE:
+    # Parse String into Atom
+    elif charClass == CharClass.SINGLEQUOTE:
+        addChar()
+        getChar()
+        while 100 <= charClass.value <= 113:
             addChar()
             getChar()
-            while 100 <= CharClass <= 113:
-                addChar()
-                getChar()
 
-            if charClass == CharClass.SINGLEQUOTE:
-                addChar()
-                nextToken = TokenClass.ATOM
-            else:
-                # ERROR
-                pass
-
-        # Parse Small Atom into Atom
-        # A small atom is also an atom. Think about combining with string rule if possible
-        elif charClass == CharClass.LOWERCASE:
+        if charClass == CharClass.SINGLEQUOTE:
             addChar()
             getChar()
-            while 0 <= CharClass <= 2:
-                addChar()
-                getChar()
-
             nextToken = TokenClass.ATOM
+        else:
+            # ERROR
+            pass
 
-        # Parse And Operator
-        elif charClass == CharClass.COMMA:
+    # Parse Small Atom into Atom
+    # A small atom is also an atom. Think about combining with string rule if possible
+    elif charClass == CharClass.LOWERCASE:
+        addChar()
+        getChar()
+        while 0 <= charClass.value <= 2:
             addChar()
-            nextToken = TokenClass.AND_OP
+            getChar()
 
-        # Parse Delimiter (End of Statement)
-        elif charClass == CharClass.FULLSTOP:
-            addChar()
-            nextToken = CharClass.DELIMITER
+        nextToken = TokenClass.ATOM
 
-        # Parse Left Parenthesis
-        elif charClass == CharClass.LEFT_PAREN:
-            addChar()
-            nextToken = CharClass.LEFT_PAREN
+    # Parse And Operator
+    elif charClass == CharClass.COMMA:
+        addChar()
+        getChar()
+        nextToken = TokenClass.AND_OP
 
-        # Parse Right Parenthesis
-        elif charClass == CharClass.RIGHT_PAREN:
-            addChar()
-            nextToken = CharClass.RIGHT_PAREN
+    # Parse Delimiter (End of Statement)
+    elif charClass == CharClass.FULLSTOP:
+        addChar()
+        getChar()
+        nextToken = TokenClass.DELIMITER
 
+    # Parse Left Parenthesis
+    elif charClass == CharClass.LEFT_PAREN:
+        addChar()
+        getChar()
+        nextToken = CharClass.LEFT_PAREN
 
+    # Parse Right Parenthesis
+    elif charClass == CharClass.RIGHT_PAREN:
+        addChar()
+        getChar()
+        nextToken = CharClass.RIGHT_PAREN
 
 
 if __name__ == '__main__':
     # Here we open the file and insert it into the analyzer
     try:
-        inputFile = open('input.txt', 'r')
-        getChar()
+        outputFile = open('parser_output.txt', 'w')
+        i = 1
         while True:
-            lex()
-            if nextToken == '':
-                break
-            print(f'{lexeme} is a {nextToken}')
-
+            file = i+".txt"
+            inputFile = open(file, 'r')
+            outputFile.write(f'~~~~~~~~~~~{file}~~~~~~~~~~~~\n')
+            getChar()
+            while True:
+                lex()
+                if nextToken == CharClass.EOF:
+                    break
+                print(f'{lexeme} is a {nextToken}')
+                outputFile.write(f'{lexeme} is a {nextToken}\n')
+            inputFile.close()
+        
     except:
-        print("ERROR - cannot open file")
-    input()
+        outputFile.close()
+        print("Done")
