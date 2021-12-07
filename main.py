@@ -295,7 +295,7 @@ if __name__ == '__main__':
         while True:
             file = str(i)+".txt"
             inputFile = open(file, 'r')
-            outputFile.write(f'~~~~~~~~~~~{file}~~~~~~~~~~~~\n')
+            outputFile.write(f'~~~~~~~~~~~ {file} ~~~~~~~~~~~~\n')
             getChar()
             while True:
                 lex()
