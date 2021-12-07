@@ -293,7 +293,7 @@ if __name__ == '__main__':
         outputFile = open('parser_output.txt', 'w')
         i = 1
         while True:
-            file = i+".txt"
+            file = str(i)+".txt"
             inputFile = open(file, 'r')
             outputFile.write(f'~~~~~~~~~~~{file}~~~~~~~~~~~~\n')
             getChar()
@@ -302,8 +302,9 @@ if __name__ == '__main__':
                 if nextToken == CharClass.EOF:
                     break
                 print(f'{lexeme} is a {nextToken}')
-                outputFile.write(f'{lexeme} is a {nextToken}\n')
+                outputFile.write(f'{lexeme:<30} is a {nextToken}\n')
             inputFile.close()
+            i+=1
         
     except:
         outputFile.close()
