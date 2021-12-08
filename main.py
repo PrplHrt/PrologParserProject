@@ -287,6 +287,9 @@ def lex():
         nextToken = CharClass.RIGHT_PAREN
 
 
+
+
+
 if __name__ == '__main__':
     # Here we open the file and insert it into the analyzer
     try:
