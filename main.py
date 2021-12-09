@@ -2,36 +2,167 @@ import re
 from enum import Enum
 
 
+class error(Exception):
+    def __init__(self, arg):
+        self.args = arg
+        # print(''.join(self.args))
+
+
 # <program> -> <clause-list> <query> | <query>
+def program():
+    getChar()
+    print("Enter Program")
+    lex()
+    try:
+        clause_list()
+    except error as e:
+        print(e.args)
+    # try catch query
+    query()
+    if nextToken == CharClass.EOF:
+        print("End of File reached")
 
 
 # <clause-list> -> <clause> | <clause> <clause-list>
+def clause_list():
+    print("Enter Clause_List")
+    try:
+        while nextToken == TokenClass.ATOM:
+            clause()
+
+    except error:
+        lex()
+
+
 # <clause> -> <predicate> . | <predicate> :- <predicate-list> .
+def clause():
+    print("Enter Clause")
+
+    predicate()
+
+    if nextToken == TokenClass.IMPLY:
+        lex()
+        predicateList()
+    if nextToken == TokenClass.DELIMITER:
+        lex()
+    else:
+        # Error - no Full Stop/End of Statement
+        raise error("no Full Stop/End of Statement at clause")
+
+
 # <query> -> ?- <predicate-list> .
-# def query():
-#     queryOperator()
-#
-#     predicateList()
-#
-#     getChar()
-#     nextChar == CharClass.FULLSTOP
+def query():
+    print("Enter Query")
+    # Check if it starts with Query
+    if nextToken == TokenClass.QUERY_SYM:
+        # Get the next Token
+        lex()
+        predicateList()
+        if nextToken == TokenClass.DELIMITER:
+            lex()
+        else:
+            # Error - no ending fullstop
+            raise error("no ending fullstop at Query")
+
+    else:
+        # Error - no query symbol
+        raise error("No Query symbol in Query")
 
 
 # <predicate-list> -> <predicate> | <predicate> , <predicate-list>
-# def predicateList():
-#     predicate()
-#
-#     while (nextToken == TokenClass.PREDICATE):
-#         lex()
-#         predicate()
+def predicateList():
+    print("Enter Predicate List")
+    try:
+        predicate()
+    except error as e:
+        pass  # FIX THIS
+
+    while nextToken == TokenClass.AND_OP:
+        lex()
+        predicate_list()
 
 
 # <predicate> -> <atom> | <atom> ( <term-list> )
+def predicate():
+    print("Enter Predicate")
+    if nextToken == TokenClass.ATOM:
+        lex()
+        if nextToken == CharClass.LEFT_PAREN:
+            lex()
+            try:
+                term_list()
+            except error as e:
+                print("".join(e.args))
+                while nextToken != CharClass.RIGHT_PAREN and nextChar != '\n':
+                    lex()
+
+            if nextToken == CharClass.RIGHT_PAREN:
+                lex()
+            else:
+                # Error - no Right Parenthesis
+                raise error(f"Invalid Predicate at line {line}, No Right Parenthesis at Predicate")
+    else:
+        # Error - no Atom
+        raise error(f"Invalid Predicate at line {line}, No Atom at Predicate")
+
+
 # <term-list> -> <term> | <term> , <term-list>
+def term_list():
+    print("Enter term list")
+    try:
+        term()
+    except error as e:
+        print("".join(e.args))
+        while nextToken != TokenClass.AND_OP and nextChar != '\n':
+            lex()
+
+    while nextToken == TokenClass.AND_OP:
+        lex()
+        term_list()
+        if nextToken == TokenClass.UNKNOWN:
+            raise error(f"Invalid Term list at line {line}")
+
+    print("Exiting term_list")
+
+
+# At the end of each fn, lex() is called
 # <term> -> <atom> | <variable> | <structure> | <numeral>
+def term():
+    print("Enter Term")
+    if nextToken == TokenClass.VARIABLE:
+        lex()
+    elif nextToken == TokenClass.NUMERAL:
+        lex()
+    elif nextToken == TokenClass.ATOM:
+        lex()
+        if nextToken == CharClass.LEFT_PAREN:
+            lex()
+            term_list()
+            if nextToken == CharClass.RIGHT_PAREN:
+                lex()
+            else:
+                raise error(f"Invalid Structure at line {line}, No Right parenthesis in Structure")
+        else:
+            print("exiting term")
+
+    else:
+        raise error(f"Invalid Term at line {line}, Invalid Token.")
+
 
 # <structure> -> <atom> ( <term-list> )
+# def structure():
+#     print("Enter Structure")
+#     if nextToken == TokenClass.ATOM:
+#         lex()
+#         if nextToken == CharClass.LEFT_PAREN:
+#             lex()
+#             term_list()
+#             if nextToken == CharClass.RIGHT_PAREN:
+#                 lex()
+
 # <atom> -> <small-atom> | ' <string> '
+# taken care of as a token
+
 # <small-atom> -> <lowercase-char> | <lowercase-char> <character-list>
 # <variable> -> <uppercase-char> | <uppercase-char> <character-list>
 
@@ -49,6 +180,7 @@ from enum import Enum
 
 
 SPECIAL = ['+', '-', '*', '/', '\\', '^', '~', ':', '.', '?', ' ', '\#', '$', '&']
+
 
 class CharClass(Enum):
     LOWERCASE = 0
@@ -100,8 +232,10 @@ class TokenClass(Enum):
     PROGRAM = 19
     DELIMITER = 20
     AND_OP = 21
+    UNKNOWN = -1
 
 
+line = 1
 charClass = 0
 lexeme = ''
 nextChar = ''
@@ -112,7 +246,7 @@ inputFile = None
 
 
 def getChar():
-    global nextChar, charClass
+    global nextChar, charClass, line
     nextChar = inputFile.read(1)
     if nextChar:
         if re.match('[A-Z_]', nextChar):
@@ -158,6 +292,7 @@ def getChar():
         elif nextChar == ',':
             charClass = CharClass.COMMA
         elif nextChar == '\n':
+            line += 1
             getChar()
         else:
             # Unrecognized character
@@ -179,11 +314,6 @@ def getNonBlank():
 def lex():
     global nextToken, lexeme
     lexeme = ''
-
-    # skipped character list
-    # skipped alpha num
-    # skipped small atom
-    # skipped character
 
     getNonBlank()
 
@@ -239,7 +369,7 @@ def lex():
     elif charClass == CharClass.SINGLEQUOTE:
         addChar()
         getChar()
-        while 100 <= charClass.value <= 113:
+        while 100 <= charClass.value <= 113 or 0 <= charClass.value <= 2:
             addChar()
             getChar()
 
@@ -286,8 +416,11 @@ def lex():
         getChar()
         nextToken = CharClass.RIGHT_PAREN
 
-
-
+    else:
+        addChar()
+        getChar()
+        nextToken = TokenClass.UNKNOWN
+    print(f'{lexeme:<20} is a {nextToken:20}')
 
 
 if __name__ == '__main__':
@@ -295,20 +428,14 @@ if __name__ == '__main__':
     try:
         outputFile = open('parser_output.txt', 'w')
         i = 1
-        while True:
-            file = str(i)+".txt"
-            inputFile = open(file, 'r')
-            outputFile.write(f'~~~~~~~~~~~ {file} ~~~~~~~~~~~~\n')
-            getChar()
-            while True:
-                lex()
-                if nextToken == CharClass.EOF:
-                    break
-                print(f'{lexeme} is a {nextToken}')
-                outputFile.write(f'{lexeme:<30} is a {nextToken}\n')
-            inputFile.close()
-            i+=1
-        
+        file = "4.txt"
+        inputFile = open(file, 'r')
+        outputFile.write(f'~~~~~~~~~~~ {file} ~~~~~~~~~~~~\n')
+        program()
+
+        inputFile.close()
+        i += 1
+
     except:
         outputFile.close()
         print("Done")
