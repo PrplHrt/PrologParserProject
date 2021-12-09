@@ -1,1 +1,109 @@
+~~~~~~~~~~~ 1.txt ~~~~~~~~~~~~
+~~~~~~~~~~~ 2.txt ~~~~~~~~~~~~
+~~~~~~~~~~~ 3.txt ~~~~~~~~~~~~
 ~~~~~~~~~~~ 4.txt ~~~~~~~~~~~~
+Invalid Term list at line 5, lexeme -
+~~~~~~~~~~~ 5.txt ~~~~~~~~~~~~
+Invalid Predicate at line 3, No Atom at expected Predicate, lexeme A1
+Invalid Predicate at line 3, No Atom at expected Predicate, lexeme N1
+~~~~~~~~~~~ 6.txt ~~~~~~~~~~~~
+Error - unrecognized character [ at line 1
+Error - unrecognized character ] at line 1
+Invalid Term at line 1, Invalid Token, lexeme [.
+Error - unrecognized character [ at line 1
+Error - unrecognized character ] at line 1
+Invalid Term at line 1, Invalid Token, lexeme [.
+Invalid Predicate at line 2, No Right Parenthesis at Predicate
+Error - unrecognized character [ at line 2
+Invalid Term at line 2, Invalid Token, lexeme [.
+Error - unrecognized character ] at line 2
+Error - unrecognized character [ at line 2
+Invalid Term at line 2, Invalid Token, lexeme [.
+Error - unrecognized character ] at line 2
+Invalid Predicate at line 3, No Right Parenthesis at Predicate
+Error - unrecognized character [ at line 3
+Invalid Term at line 3, Invalid Token, lexeme [.
+Error - unrecognized character | at line 3
+Invalid Term list at line 3, lexeme |
+Error - unrecognized character ] at line 3
+Error - unrecognized character [ at line 3
+Invalid Term at line 3, Invalid Token, lexeme [.
+Error - unrecognized character | at line 3
+Invalid Term list at line 3, lexeme |
+Error - unrecognized character ] at line 3
+Error - unrecognized character [ at line 7
+Error - unrecognized character ] at line 7
+Invalid Term at line 7, Invalid Token, lexeme [.
+Error - unrecognized character [ at line 7
+Error - unrecognized character ] at line 7
+Invalid Term at line 7, Invalid Token, lexeme [.
+Error - unrecognized character [ at line 7
+Error - unrecognized character ] at line 7
+Invalid Term at line 7, Invalid Token, lexeme [.
+Error - unrecognized character [ at line 7
+Error - unrecognized character ] at line 7
+Error - unrecognized character [ at line 7
+Invalid Term at line 7, Invalid Token, lexeme [.
+Error - unrecognized character ] at line 7
+Error - unrecognized character [ at line 7
+Error - unrecognized character ] at line 7
+Invalid Term at line 7, Invalid Token, lexeme [.
+Invalid Predicate at line 8, No Right Parenthesis at Predicate
+Error - unrecognized character [ at line 8
+Invalid Term at line 8, Invalid Token, lexeme [.
+Error - unrecognized character | at line 8
+Invalid Term list at line 8, lexeme |
+Error - unrecognized character ] at line 8
+Error - unrecognized character [ at line 8
+Error - unrecognized character | at line 8
+Error - unrecognized character ] at line 8
+Error - unrecognized character [ at line 8
+Error - unrecognized character | at line 8
+Error - unrecognized character ] at line 8
+Error - unrecognized character [ at line 9
+Error - unrecognized character ] at line 9
+Invalid Term at line 9, Invalid Token, lexeme [.
+Error - unrecognized character [ at line 9
+Error - unrecognized character ] at line 9
+Invalid Term at line 9, Invalid Token, lexeme [.
+Error - unrecognized character [ at line 10
+Invalid Term at line 10, Invalid Token, lexeme [.
+Error - unrecognized character | at line 10
+Error - unrecognized character ] at line 10
+Error - unrecognized character [ at line 10
+Invalid Term at line 10, Invalid Token, lexeme [.
+Error - unrecognized character | at line 10
+Error - unrecognized character ] at line 10
+Error - unrecognized character [ at line 10
+Invalid Term at line 10, Invalid Token, lexeme [.
+Error - unrecognized character | at line 10
+Error - unrecognized character ] at line 10
+Error - unrecognized character = at line 10
+Error - unrecognized character < at line 10
+Error - unrecognized character [ at line 10
+Invalid Term at line 10, Invalid Token, lexeme [.
+Error - unrecognized character | at line 10
+Error - unrecognized character ] at line 10
+Invalid Predicate at line 11, No Right Parenthesis at Predicate
+Error - unrecognized character [ at line 11
+Invalid Term at line 11, Invalid Token, lexeme [.
+Error - unrecognized character | at line 11
+Error - unrecognized character ] at line 11
+Error - unrecognized character [ at line 11
+Invalid Term at line 11, Invalid Token, lexeme [.
+Error - unrecognized character | at line 11
+Error - unrecognized character ] at line 11
+Error - unrecognized character [ at line 11
+Invalid Term at line 11, Invalid Token, lexeme [.
+Error - unrecognized character | at line 11
+Error - unrecognized character ] at line 11
+Error - unrecognized character > at line 11
+Error - unrecognized character [ at line 11
+Invalid Term at line 11, Invalid Token, lexeme [.
+Error - unrecognized character | at line 11
+Error - unrecognized character ] at line 11
+Invalid Predicate at line 12, No Right Parenthesis at Predicate
+Error - unrecognized character [ at line 12
+Invalid Term at line 12, Invalid Token, lexeme [.
+Error - unrecognized character ] at line 12
+Invalid Term list at line 12, lexeme ]

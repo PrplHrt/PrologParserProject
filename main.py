@@ -5,7 +5,11 @@ from enum import Enum
 class error(Exception):
     def __init__(self, arg):
         self.args = arg
-        # print(''.join(self.args))
+
+    def __str__(self):
+        outputFile.write(''.join(self.args))
+        outputFile.write('\n')
+        return ''.join(self.args)
 
 
 # <program> -> <clause-list> <query> | <query>
@@ -16,7 +20,9 @@ def program():
     try:
         clause_list()
     except error as e:
-        print(e.args)
+        print(e)
+        while nextToken != TokenClass.QUERY_SYM:
+            lex()
     # try catch query
     query()
     if nextToken == CharClass.EOF:
@@ -79,7 +85,7 @@ def predicateList():
 
     while nextToken == TokenClass.AND_OP:
         lex()
-        predicate_list()
+        predicateList()
 
 
 # <predicate> -> <atom> | <atom> ( <term-list> )
@@ -92,7 +98,7 @@ def predicate():
             try:
                 term_list()
             except error as e:
-                print("".join(e.args))
+                print(e)
                 while nextToken != CharClass.RIGHT_PAREN and nextChar != '\n':
                     lex()
 
@@ -101,9 +107,11 @@ def predicate():
             else:
                 # Error - no Right Parenthesis
                 raise error(f"Invalid Predicate at line {line}, No Right Parenthesis at Predicate")
+        else:
+            pass
     else:
         # Error - no Atom
-        raise error(f"Invalid Predicate at line {line}, No Atom at Predicate")
+        raise error(f"Invalid Predicate at line {line}, No Atom at expected Predicate, lexeme {lexeme}")
 
 
 # <term-list> -> <term> | <term> , <term-list>
@@ -112,7 +120,7 @@ def term_list():
     try:
         term()
     except error as e:
-        print("".join(e.args))
+        print(e)
         while nextToken != TokenClass.AND_OP and nextChar != '\n':
             lex()
 
@@ -120,12 +128,11 @@ def term_list():
         lex()
         term_list()
         if nextToken == TokenClass.UNKNOWN:
-            raise error(f"Invalid Term list at line {line}")
+            raise error(f"Invalid Term list at line {line}, lexeme {lexeme}")
 
     print("Exiting term_list")
 
 
-# At the end of each fn, lex() is called
 # <term> -> <atom> | <variable> | <structure> | <numeral>
 def term():
     print("Enter Term")
@@ -141,12 +148,12 @@ def term():
             if nextToken == CharClass.RIGHT_PAREN:
                 lex()
             else:
-                raise error(f"Invalid Structure at line {line}, No Right parenthesis in Structure")
+                # no right parenthesis
+                raise error(f"Invalid structure at line {line}, missing right parenthesis")
         else:
-            print("exiting term")
-
+            pass
     else:
-        raise error(f"Invalid Term at line {line}, Invalid Token.")
+        raise error(f"Invalid Term at line {line}, Invalid Token, lexeme {lexeme}.")
 
 
 # <structure> -> <atom> ( <term-list> )
@@ -159,25 +166,6 @@ def term():
 #             term_list()
 #             if nextToken == CharClass.RIGHT_PAREN:
 #                 lex()
-
-# <atom> -> <small-atom> | ' <string> '
-# taken care of as a token
-
-# <small-atom> -> <lowercase-char> | <lowercase-char> <character-list>
-# <variable> -> <uppercase-char> | <uppercase-char> <character-list>
-
-# <character-list> -> <alphanumeric> | <alphanumeric> <character-list>
-# <string> -> <character> | <character> <string>
-# <numeral> -> <digit> | <digit> <numeral>
-
-# <character> -> <alphanumeric> | <special>                             --> ALL
-# <alphanumeric> -> <lowercase-char> | <uppercase-char> | <digit>       --> 0-2
-
-# <lowercase-char> -> a | b | c | ... | x | y | z                       --> [a-z]
-# <uppercase-char> -> A | B | C | ... | X | Y | Z | _                   --> [A-Z_]
-# <digit> -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9                      --> [\d]
-# <special> -> + | - | * | / | \ | ^ | ~ | : | . | ? | | # | $ | &      --> [\+\-\*\/\\\^\~\:\.\?\ \#\$\&]
-
 
 SPECIAL = ['+', '-', '*', '/', '\\', '^', '~', ':', '.', '?', ' ', '\#', '$', '&']
 
@@ -200,7 +188,6 @@ class CharClass(Enum):
     MULT_OP = 111
     DIV_OP = 112
     SPACE = 113
-
     LEFT_PAREN = 3
     RIGHT_PAREN = 4
     SINGLEQUOTE = 5
@@ -217,19 +204,9 @@ class TokenClass(Enum):
     ALPHANUMERIC = 4
     CHAR_LIST = 5
     VARIABLE = 6
-    SMALL_ATOM = 7
     ATOM = 8
-    STRUCTURE = 9
-    TERM = 10
-    TERM_LIST = 11
-    PREDICATE = 12
-    PREDICATE_LIST = 13
-    QUERY = 14
     QUERY_SYM = 15
     IMPLY = 16
-    CLAUSE = 17
-    CLAUSE_LIST = 18
-    PROGRAM = 19
     DELIMITER = 20
     AND_OP = 21
     UNKNOWN = -1
@@ -239,8 +216,6 @@ line = 1
 charClass = 0
 lexeme = ''
 nextChar = ''
-lexLen = 0  # Not sure we need this
-token = 0
 nextToken = 0
 inputFile = None
 
@@ -426,16 +401,20 @@ def lex():
 if __name__ == '__main__':
     # Here we open the file and insert it into the analyzer
     try:
-        outputFile = open('parser_output.txt', 'w')
-        i = 1
-        file = "4.txt"
-        inputFile = open(file, 'r')
-        outputFile.write(f'~~~~~~~~~~~ {file} ~~~~~~~~~~~~\n')
-        program()
-
-        inputFile.close()
-        i += 1
-
-    except:
-        outputFile.close()
-        print("Done")
+        try:
+            outputFile = open('parser_output.txt', 'w')
+            i = 1
+            while True:
+                line = 1
+                file = f"{i}.txt"
+                inputFile = open(file, 'r')
+                outputFile.write(f'~~~~~~~~~~~ {file} ~~~~~~~~~~~~\n')
+                program()
+                inputFile.close()
+                i += 1
+            outputFile.close()
+        except Exception:
+            outputFile.close()
+            print("Done")
+    except Exception as e:
+        print(e)
