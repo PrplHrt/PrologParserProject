@@ -36,15 +36,21 @@ def clause_list():
         while nextToken == TokenClass.ATOM:
             clause()
 
-    except error:
-        lex()
+    except error as e:
+        print(e)
+        while nextChar != '\n':
+            lex()
 
 
 # <clause> -> <predicate> . | <predicate> :- <predicate-list> .
 def clause():
     print("Enter Clause")
-
-    predicate()
+    try:
+        predicate()
+    except error as e:
+        print(e)
+        while nextToken != TokenClass.IMPLY and nextToken != TokenClass.DELIMITER:
+            lex()
 
     if nextToken == TokenClass.IMPLY:
         lex()
@@ -67,8 +73,8 @@ def query():
         if nextToken == TokenClass.DELIMITER:
             lex()
         else:
-            # Error - no ending fullstop
-            raise error("no ending fullstop at Query")
+            # Error - no ending delimiter
+            raise error("No ending delimiter at Query")
 
     else:
         # Error - no query symbol
@@ -81,7 +87,9 @@ def predicateList():
     try:
         predicate()
     except error as e:
-        pass  # FIX THIS
+        print(e)
+        while nextToken != TokenClass.AND_OP and nextChar != '\n':
+            lex()
 
     while nextToken == TokenClass.AND_OP:
         lex()
@@ -134,6 +142,8 @@ def term_list():
 
 
 # <term> -> <atom> | <variable> | <structure> | <numeral>
+# <term> -> <predicate> | <variable> | <numeral>
+
 def term():
     print("Enter Term")
     if nextToken == TokenClass.VARIABLE:
@@ -144,7 +154,10 @@ def term():
         lex()
         if nextToken == CharClass.LEFT_PAREN:
             lex()
-            term_list()
+            try:
+                term_list()
+            except error as e:
+                print(e)
             if nextToken == CharClass.RIGHT_PAREN:
                 lex()
             else:
@@ -268,10 +281,11 @@ def getChar():
             charClass = CharClass.COMMA
         elif nextChar == '\n':
             line += 1
-            getChar()
+            charClass = CharClass.UNKNOWN
         else:
-            # Unrecognized character
-            pass
+            print(f'Error - unrecognized character {nextChar} at line {line}')
+            outputFile.write(f'Error - unrecognized character {nextChar} at line {line}\n')
+            charClass = CharClass.UNKNOWN
     else:
         charClass = CharClass.EOF
 
