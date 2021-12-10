@@ -1,7 +1,6 @@
 import re
 from enum import Enum
 
-
 class error(Exception):
     def __init__(self, arg):
         global num_errors
@@ -13,6 +12,7 @@ class error(Exception):
         outputFile.write('\n')
         return ''.join(self.args)
 
+################################ SYNTAX ANALYZER ################################
 
 # <program> -> <clause-list> <query> | <query>
 def program():
@@ -25,8 +25,19 @@ def program():
         print(e)
         while nextToken != TokenClass.QUERY_SYM:
             lex()
-    # try catch query
-    query()
+    try:
+        query()
+    except error as e:
+        print(e)
+        if nextToken != CharClass.EOF:
+            lex()
+            if nextToken == TokenClass.ATOM:
+                predicateList()
+            else:
+                e_ = error(f"Invalid Query at line {line}, no atom found at expected predicate list.")
+                print(e_)
+
+
     if nextToken == CharClass.EOF:
         print("End of File reached")
 
@@ -80,7 +91,7 @@ def query():
 
     else:
         # Error - no query symbol
-        raise error("No Query symbol in Query")
+        raise error(f"Invalid Query at line {line}, No Query symbol in Query")
 
 
 # <predicate-list> -> <predicate> | <predicate> , <predicate-list>
@@ -143,7 +154,7 @@ def term_list():
     print("Exiting term_list")
 
 
-# <term> -> <atom> | <variable> | <structure> | <numeral>
+# <term> -> <atom> | <structure> | <variable> | <numeral>
 # <term> -> <predicate> | <variable> | <numeral>
 
 def term():
@@ -182,8 +193,8 @@ def term():
 #             if nextToken == CharClass.RIGHT_PAREN:
 #                 lex()
 
-SPECIAL = ['+', '-', '*', '/', '\\', '^', '~', ':', '.', '?', ' ', '\#', '$', '&']
 
+################################ LEXICAL ANALYZER ################################
 
 class CharClass(Enum):
     LOWERCASE = 0
@@ -234,7 +245,7 @@ lexeme = ''
 nextChar = ''
 nextToken = 0
 inputFile = None
-
+SPECIAL = ['+', '-', '*', '/', '\\', '^', '~', ':', '.', '?', ' ', '\#', '$', '&']
 
 def getChar():
     global nextChar, charClass, line, num_errors
@@ -416,6 +427,9 @@ def lex():
     print(f'{lexeme:<20} is a {nextToken:20}')
 
 
+################################ MAIN ################################
+
+
 if __name__ == '__main__':
     # Here we open the file and insert it into the analyzer
     try:
@@ -432,7 +446,7 @@ if __name__ == '__main__':
                 if num_errors == 0:
                     outputFile.write('Syntactically Correct\n')
                 else:
-                    outputFile.write(f'{num_errors} errors found\n')
+                    outputFile.write(f'{num_errors} error(s) found\n')
                 inputFile.close()
                 i += 1
             outputFile.close()

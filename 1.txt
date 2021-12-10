@@ -7,4 +7,4 @@ hostile(H) :- enemy(H,america).
 american(west).
 nation(nono). enemy(nono,america).
 nation(america).
-?- criminal(Who). 
+?- criminal(Who).
