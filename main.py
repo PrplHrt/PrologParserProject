@@ -4,7 +4,9 @@ from enum import Enum
 
 class error(Exception):
     def __init__(self, arg):
+        global num_errors
         self.args = arg
+        num_errors += 1
 
     def __str__(self):
         outputFile.write(''.join(self.args))
@@ -226,6 +228,7 @@ class TokenClass(Enum):
 
 
 line = 1
+num_errors = 0
 charClass = 0
 lexeme = ''
 nextChar = ''
@@ -234,7 +237,7 @@ inputFile = None
 
 
 def getChar():
-    global nextChar, charClass, line
+    global nextChar, charClass, line, num_errors
     nextChar = inputFile.read(1)
     if nextChar:
         if re.match('[A-Z_]', nextChar):
@@ -285,6 +288,7 @@ def getChar():
         else:
             print(f'Error - unrecognized character {nextChar} at line {line}')
             outputFile.write(f'Error - unrecognized character {nextChar} at line {line}\n')
+            num_errors += 1
             charClass = CharClass.UNKNOWN
     else:
         charClass = CharClass.EOF
@@ -420,10 +424,15 @@ if __name__ == '__main__':
             i = 1
             while True:
                 line = 1
+                num_errors = 0
                 file = f"{i}.txt"
                 inputFile = open(file, 'r')
                 outputFile.write(f'~~~~~~~~~~~ {file} ~~~~~~~~~~~~\n')
                 program()
+                if num_errors == 0:
+                    outputFile.write('Syntactically Correct\n')
+                else:
+                    outputFile.write(f'{num_errors} errors found\n')
                 inputFile.close()
                 i += 1
             outputFile.close()
