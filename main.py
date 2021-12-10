@@ -23,7 +23,7 @@ def program():
         clause_list()
     except error as e:
         print(e)
-        while nextToken != TokenClass.QUERY_SYM:
+        while nextToken != TokenClass.QUERY_SYM and nextToken != CharClass.EOF:
             lex()
     try:
         query()
@@ -72,7 +72,7 @@ def clause():
         lex()
     else:
         # Error - no Full Stop/End of Statement
-        raise error("no Full Stop/End of Statement at clause")
+        raise error(f"Invalid clause at line {line}, no Delimiter at end of clause")
 
 
 # <query> -> ?- <predicate-list> .
@@ -87,7 +87,7 @@ def query():
             lex()
         else:
             # Error - no ending delimiter
-            raise error("No ending delimiter at Query")
+            raise error(f"Invalid Query at line {line}, No ending delimiter at Query")
 
     else:
         # Error - no query symbol
@@ -101,7 +101,7 @@ def predicateList():
         predicate()
     except error as e:
         print(e)
-        while nextToken != TokenClass.AND_OP and nextChar != '\n':
+        while nextToken != TokenClass.AND_OP and nextChar != '\n' and nextToken != CharClass.EOF:
             lex()
 
     while nextToken == TokenClass.AND_OP:
@@ -120,7 +120,7 @@ def predicate():
                 term_list()
             except error as e:
                 print(e)
-                while nextToken != CharClass.RIGHT_PAREN and nextChar != '\n':
+                while nextToken != CharClass.RIGHT_PAREN and nextChar != '\n' and nextToken != CharClass.EOF:
                     lex()
 
             if nextToken == CharClass.RIGHT_PAREN:
@@ -142,7 +142,7 @@ def term_list():
         term()
     except error as e:
         print(e)
-        while nextToken != TokenClass.AND_OP and nextChar != '\n':
+        while nextToken != TokenClass.AND_OP and nextChar != '\n' :
             lex()
 
     while nextToken == TokenClass.AND_OP:
@@ -442,6 +442,7 @@ if __name__ == '__main__':
                 file = f"{i}.txt"
                 inputFile = open(file, 'r')
                 outputFile.write(file.center(30,'~') + '\n')
+                print(file.center(30,'~'))
                 program()
                 if num_errors == 0:
                     outputFile.write('Syntactically Correct\n')
