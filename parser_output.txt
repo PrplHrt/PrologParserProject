@@ -1,17 +1,17 @@
-~~~~~~~~~~~ 1.txt ~~~~~~~~~~~~
+~~~~~~~~~~~~1.txt~~~~~~~~~~~~~
 Syntactically Correct
-~~~~~~~~~~~ 2.txt ~~~~~~~~~~~~
+~~~~~~~~~~~~2.txt~~~~~~~~~~~~~
 Syntactically Correct
-~~~~~~~~~~~ 3.txt ~~~~~~~~~~~~
+~~~~~~~~~~~~3.txt~~~~~~~~~~~~~
 Syntactically Correct
-~~~~~~~~~~~ 4.txt ~~~~~~~~~~~~
+~~~~~~~~~~~~4.txt~~~~~~~~~~~~~
 Invalid Term list at line 5, lexeme -
 1 errors found
-~~~~~~~~~~~ 5.txt ~~~~~~~~~~~~
+~~~~~~~~~~~~5.txt~~~~~~~~~~~~~
 Invalid Predicate at line 3, No Atom at expected Predicate, lexeme A1
 Invalid Predicate at line 3, No Atom at expected Predicate, lexeme N1
 2 errors found
-~~~~~~~~~~~ 6.txt ~~~~~~~~~~~~
+~~~~~~~~~~~~6.txt~~~~~~~~~~~~~
 Error - unrecognized character [ at line 1
 Error - unrecognized character ] at line 1
 Invalid Term at line 1, Invalid Token, lexeme [.

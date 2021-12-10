@@ -427,7 +427,7 @@ if __name__ == '__main__':
                 num_errors = 0
                 file = f"{i}.txt"
                 inputFile = open(file, 'r')
-                outputFile.write(f'~~~~~~~~~~~ {file} ~~~~~~~~~~~~\n')
+                outputFile.write(file.center(30,'~') + '\n')
                 program()
                 if num_errors == 0:
                     outputFile.write('Syntactically Correct\n')
