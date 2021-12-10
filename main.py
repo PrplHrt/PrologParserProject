@@ -1,6 +1,7 @@
 import re
 from enum import Enum
 
+
 class error(Exception):
     def __init__(self, arg):
         global num_errors
@@ -11,6 +12,7 @@ class error(Exception):
         outputFile.write(''.join(self.args))
         outputFile.write('\n')
         return ''.join(self.args)
+
 
 ################################ SYNTAX ANALYZER ################################
 
@@ -36,7 +38,6 @@ def program():
             else:
                 e_ = error(f"Invalid Query at line {line}, no atom found at expected predicate list.")
                 print(e_)
-
 
     if nextToken == CharClass.EOF:
         print("End of File reached")
@@ -142,7 +143,7 @@ def term_list():
         term()
     except error as e:
         print(e)
-        while nextToken != TokenClass.AND_OP and nextChar != '\n' :
+        while nextToken != TokenClass.AND_OP and nextChar != '\n':
             lex()
 
     while nextToken == TokenClass.AND_OP:
@@ -246,6 +247,7 @@ nextChar = ''
 nextToken = 0
 inputFile = None
 SPECIAL = ['+', '-', '*', '/', '\\', '^', '~', ':', '.', '?', ' ', '\#', '$', '&']
+
 
 def getChar():
     global nextChar, charClass, line, num_errors
@@ -441,8 +443,8 @@ if __name__ == '__main__':
                 num_errors = 0
                 file = f"{i}.txt"
                 inputFile = open(file, 'r')
-                outputFile.write(file.center(30,'~') + '\n')
-                print(file.center(30,'~'))
+                outputFile.write(file.center(30, '~') + '\n')
+                print(file.center(30, '~'))
                 program()
                 if num_errors == 0:
                     outputFile.write('Syntactically Correct\n')
